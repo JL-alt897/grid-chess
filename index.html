@@ -236,6 +236,22 @@ button.tron.danger:hover{background:rgba(255,43,78,.15); box-shadow:0 0 16px rgb
 .bigbtn.red{color:var(--red-2); background:rgba(255,43,78,.08); border-color:var(--red);}
 .bigbtn.red:hover{background:rgba(255,43,78,.22); box-shadow:0 0 26px rgba(255,43,78,.6); transform:scale(1.02);}
 .hint-line{font-size:15px; color:#5fa8c0; letter-spacing:1px;}
+/* pre-game setup inside start overlay */
+.modal p.intro{font-size:14px; margin:12px 0 18px;}
+.setup{text-align:left; margin:0 0 4px;}
+.setup .seglabel{margin-top:14px; margin-bottom:6px;}
+.setup .seg{margin-bottom:2px;}
+#preDiffSeg button{font-size:9.5px; letter-spacing:.3px; padding:10px 2px; white-space:nowrap;}
+#preDiffSeg button[data-diff="4"]{color:var(--gold);}
+#preDiffSeg button[data-diff="4"].on{background:linear-gradient(180deg, rgba(255,228,107,.28), rgba(255,228,107,.08)); box-shadow:inset 0 0 14px rgba(255,228,107,.4); color:#fff;}
+#preColorSeg button{font-size:10px; padding:11px 2px;}
+#preColorSeg button[data-side="blue"].on{background:linear-gradient(180deg, rgba(24,227,255,.25), rgba(24,227,255,.08)); color:#fff; box-shadow:inset 0 0 14px rgba(28,167,200,.35);}
+#preColorSeg button[data-side="red"].on{background:linear-gradient(180deg, rgba(255,43,78,.28), rgba(255,43,78,.08)); color:#fff; box-shadow:inset 0 0 14px rgba(255,43,78,.35);}
+/* ADAPTATIVO (aprende de ti) — acento verde/cian */
+#preDiffSeg button{font-size:8.5px;}
+#preDiffSeg button[data-diff="5"], #diffSeg button[data-diff="5"]{color:#46e8b0;}
+#preDiffSeg button[data-diff="5"].on, #diffSeg button[data-diff="5"].on{background:linear-gradient(180deg, rgba(70,232,176,.26), rgba(70,232,176,.07)); box-shadow:inset 0 0 14px rgba(70,232,176,.4); color:#fff;}
+.learnline{font-size:11px; color:#46e8b0; letter-spacing:.4px; margin:8px 0 2px; min-height:14px; text-align:left;}
 
 /* promotion picker */
 .promo{display:flex; gap:12px; justify-content:center; margin-top:10px;}
@@ -264,7 +280,7 @@ button.tron.danger:hover{background:rgba(255,43,78,.15); box-shadow:0 0 16px rgb
 
   <div class="stage">
     <div class="boardcol">
-      <div class="turnbar red" id="turnbar"><span class="dot"></span><span id="turntext">ROJO MUEVE</span></div>
+      <div class="turnbar blue" id="turnbar"><span class="dot"></span><span id="turntext">AZUL MUEVE</span></div>
       <div class="boardframe">
         <div class="coords files top" id="filesTop"></div>
         <div class="coords files bottom" id="filesBottom"></div>
@@ -288,6 +304,7 @@ button.tron.danger:hover{background:rgba(255,43,78,.15); box-shadow:0 0 16px rgb
             <button data-diff="2" class="on">MEDIO</button>
             <button data-diff="3">DIFÍCIL</button>
             <button data-diff="4">MAESTRO</button>
+            <button data-diff="5">ADAPTA</button>
           </div>
         </div>
         <div class="aithink" id="aithink"></div>
@@ -307,8 +324,8 @@ button.tron.danger:hover{background:rgba(255,43,78,.15); box-shadow:0 0 16px rgb
       <div class="card">
         <h3>BAJAS</h3>
         <div class="tray">
-          <div class="trayrow r"><span class="label">ROJO</span><div class="pcs" id="capRed"></div><span class="adv" id="advRed"></span></div>
-          <div class="trayrow b"><span class="label">AZUL</span><div class="pcs" id="capBlue"></div><span class="adv" id="advBlue"></span></div>
+          <div class="trayrow b"><span class="label">AZUL</span><div class="pcs" id="capRed"></div><span class="adv" id="advRed"></span></div>
+          <div class="trayrow r"><span class="label">ROJO</span><div class="pcs" id="capBlue"></div><span class="adv" id="advBlue"></span></div>
         </div>
       </div>
 
@@ -335,12 +352,38 @@ button.tron.danger:hover{background:rgba(255,43,78,.15); box-shadow:0 0 16px rgb
 <div class="overlay" id="startOverlay">
   <div class="modal">
     <h2><span class="g">GRID</span> // <span class="c">CHESS</span></h2>
-    <p>Entras a la Red. El <b style="color:var(--red-2)">Rojo</b> contra el <b style="color:var(--blue-2)">Azul</b>.<br>Elige tu derrotero, programa.</p>
-    <div class="choices">
-      <button class="bigbtn red" id="startAI">⚔ JUGAR VS CPU</button>
-      <button class="bigbtn blue" id="startPVP">⚔ 2 JUGADORES</button>
+    <p class="intro">Entras a la Red. El <b style="color:var(--blue-2)">Azul</b> abre el juego contra el <b style="color:var(--red-2)">Rojo</b>.<br>Configura tu partida, programa.</p>
+
+    <div class="setup">
+      <div class="seglabel">Modo de juego</div>
+      <div class="seg" id="preModeSeg">
+        <button data-mode="ai" class="on">VS CPU</button>
+        <button data-mode="pvp">2 JUGADORES</button>
+      </div>
+
+      <div id="preAiopts">
+        <div class="seglabel">Dificultad de la CPU</div>
+        <div class="seg" id="preDiffSeg">
+          <button data-diff="1">FÁCIL</button>
+          <button data-diff="2" class="on">MEDIO</button>
+          <button data-diff="3">DIFÍCIL</button>
+          <button data-diff="4">MAESTRO</button>
+          <button data-diff="5">ADAPTA</button>
+        </div>
+        <div class="learnline" id="learnLine"></div>
+
+        <div class="seglabel">¿Con qué color juegas?</div>
+        <div class="seg" id="preColorSeg">
+          <button data-side="blue" class="on">AZUL · mueve 1°</button>
+          <button data-side="red">ROJO · mueve 2°</button>
+        </div>
+      </div>
     </div>
-    <div class="hint-line">Tú juegas con el ROJO · la CPU mueve el AZUL</div>
+
+    <div class="choices">
+      <button class="bigbtn blue" id="startBtn">⚔ ENTRAR A LA RED</button>
+    </div>
+    <div class="hint-line" id="startHint">El Azul siempre mueve primero · elige tu bando y dificultad</div>
   </div>
 </div>
 
@@ -403,10 +446,10 @@ const ART = {
     "...##########...","...##########...","...##########...","...##########...",
     "..############..",".##############.",".##############.","................"],
   q:[
-    "................","..#..#..#..#....","..#..#..#..#....","..############..",
-    "..############..","...##########...","...##########...","....########....",
-    "....########....","....########....","...##########...","..############..",
-    "..############..",".##############.",".##############.","................"],
+    "................",".#..#..#..#..#..",".#..#..#..#..#..",".##.##.##.##.##.",
+    ".##############.","..############..","...##########...","....########....",
+    "....########....","...##########...","..############..",".##############.",
+    ".##############.","################","################","................"],
   k:[
     ".......##.......",".......##.......",".....######.....",".......##.......",
     "......####......","....########....","...##########...","..############..",
@@ -414,6 +457,13 @@ const ART = {
     "...##########...","..############..",".##############.",".##############."]
 };
 const VAL={p:100,n:320,b:330,r:500,q:900,k:0};
+/* Identidad visual: el AZUL es el bando que mueve primero ("blancas").
+   El motor internamente usa RED como primer jugador, pero se MUESTRA azul.
+   Esto es sólo presentación: el motor (probado con perft) no se toca. */
+const VCOL={red:'blue',blue:'red'};    // color del motor -> color visual (paleta)
+const VLAB={red:'AZUL',blue:'ROJO'};   // color del motor -> etiqueta de texto
+function vcol(c){return VCOL[c]||c;}
+function vlab(c){return VLAB[c]||'';}
 
 /* render a piece bitmap onto a canvas, neon-colored */
 function drawPiece(canvas, type, color, size){
@@ -676,6 +726,7 @@ function kingShield(b,color){
 function richEval(s){
   const b=s.board, ph=gamePhase(b);
   let score=0, redB=0, blueB=0;
+  let redUndev=0, blueUndev=0, redQ=null, blueQ=null;
   const pf={red:[0,0,0,0,0,0,0,0], blue:[0,0,0,0,0,0,0,0]};
   const pawns={red:[], blue:[]};
   for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c]; if(p&&p.t==='p'){pf[p.c][c]++; pawns[p.c].push([r,c]);}}
@@ -691,6 +742,13 @@ function richEval(s){
       if(own===0&&opp===0) v+=22; else if(own===0) v+=11;
       if((p.c===RED&&r===1)||(p.c===BLUE&&r===6)) v+=24;
     }
+    // movilidad: actividad real de las piezas (evita jugadas/jaques inútiles)
+    if(p.t==='n'){ let m=0; for(const [dr,dc] of KN){const nr=r+dr,nc=c+dc; if(inB(nr,nc)){const q=b[nr][nc]; if(!q||q.c!==p.c)m++;}} v+=m*4; }
+    else if(p.t==='b'){ let m=0; for(const [dr,dc] of DIAG){let nr=r+dr,nc=c+dc; while(inB(nr,nc)){const q=b[nr][nc]; if(!q){m++;nr+=dr;nc+=dc;}else{if(q.c!==p.c)m++;break;}}} v+=m*3; }
+    else if(p.t==='r'){ let m=0; for(const [dr,dc] of ORTHO){let nr=r+dr,nc=c+dc; while(inB(nr,nc)){const q=b[nr][nc]; if(!q){m++;nr+=dr;nc+=dc;}else{if(q.c!==p.c)m++;break;}}} v+=m*2; }
+    else if(p.t==='q'){ let m=0; for(const [dr,dc] of K8){let nr=r+dr,nc=c+dc; while(inB(nr,nc)){const q=b[nr][nc]; if(!q){m++;nr+=dr;nc+=dc;}else{if(q.c!==p.c)m++;break;}}} v+=m; if(p.c===RED)redQ=[r,c]; else blueQ=[r,c]; }
+    // desarrollo: piezas menores aún en su casilla inicial
+    if((p.t==='n'||p.t==='b') && r===(p.c===RED?7:0)){ if(p.c===RED)redUndev++; else blueUndev++; }
     score += sign*v;
   }
   if(redB>=2)score+=32; if(blueB>=2)score-=32;
@@ -707,6 +765,15 @@ function richEval(s){
   }
   // king safety scales down toward the endgame
   score += Math.round((kingShield(b,RED)-kingShield(b,BLUE))*ph/24);
+  // apertura: castiga sacar la dama demasiado pronto. La movilidad ya premia el
+  // desarrollo, pero TAMBIÉN premiaría una dama temprana (tiene muchas casillas);
+  // este castigo lo contrarresta y frena los jaques inútiles tipo Dh5+ al inicio.
+  if(s.fullmove<=10){
+    if(redQ && !(redQ[0]===7&&redQ[1]===3) && redUndev>=2) score -= 28;
+    if(blueQ && !(blueQ[0]===0&&blueQ[1]===3) && blueUndev>=2) score += 28;
+    score -= Math.max(0,redUndev-2)*4;   // leve empujón a desarrollar (no castiga e4/d4)
+    score += Math.max(0,blueUndev-2)*4;
+  }
   score += (s.turn===RED?8:-8); // tempo
   return score;
 }
@@ -744,6 +811,7 @@ function quiesce(s,alpha,beta){
   }
   return alpha;
 }
+function hasNonPawn(b,color){ for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=b[r][c]; if(p&&p.c===color&&p.t!=='p'&&p.t!=='k')return true;} return false; }
 function searchAB(s,depth,alpha,beta,ply){
   if(_stop) return 0;
   if((_nodes&2047)===0 && (Date.now()-_start)>_limit){_stop=true; return 0;}
@@ -751,6 +819,16 @@ function searchAB(s,depth,alpha,beta,ply){
   const checked=inCheck(s,s.turn);
   let d=depth; if(checked && ply<40) d++; // check extension
   if(d<=0) return quiesce(s,alpha,beta);
+  // Poda de movimiento nulo: si "paso" y el rival aún no me supera, puedo cortar.
+  // Gana 1-2 plies de profundidad efectiva. Evitada en jaque y en zugzwang (sin
+  // piezas mayores/menores) y al buscar mates (beta cerca de MATE).
+  if(!checked && d>=3 && beta<MATE-1000 && hasNonPawn(s.board,s.turn)){
+    const ns=cloneState(s); ns.turn=other(s.turn); ns.ep=null;
+    const R = d>=6?3:2;
+    const v=-searchAB(ns, d-1-R, -beta, -beta+1, ply+1);
+    if(_stop) return 0;
+    if(v>=beta) return beta;
+  }
   const moves=legalMoves(s,s.turn);
   if(moves.length===0) return checked? -(MATE-ply) : 0;
   orderSearch(moves,s.board,ply);
@@ -795,6 +873,109 @@ function analyze(s,maxDepth,timeMs){
     if(Math.abs(bestScore)>=MATE-200) break; // forced mate found
   }
   return {move:best, score:bestScore, depth:reached, mate:Math.abs(bestScore)>=MATE-200, nodes:_nodes};
+}
+
+// Como analyze pero devuelve el puntaje (casi-exacto) de CADA jugada raíz,
+// ordenado de mejor a peor. Es la base de la escalera de dificultad y de la
+// variedad de aperturas. Ventana completa en la raíz => puntajes comparables.
+function analyzeRoot(s,maxDepth,timeMs){
+  _nodes=0;_start=Date.now();_limit=timeMs;_stop=false;_killers=[];_hist={};
+  const root=legalMoves(s,s.turn);
+  if(!root.length) return {list:[],best:null,score:inCheck(s,s.turn)?-MATE:0,depth:0,mate:inCheck(s,s.turn),stalemate:!inCheck(s,s.turn),nodes:0};
+  let scored=root.map(m=>({move:m,score:0}));
+  let depthDone=0, best=root[0], bestScore=0;
+  for(let d=1; d<=maxDepth; d++){
+    scored.sort((a,b)=>b.score-a.score);   // mejor primero => mejores cortes en los subárboles
+    const next=[]; let aborted=false;
+    for(const e of scored){
+      const ns=cloneState(s); applyMove(ns,e.move);
+      const v=-searchAB(ns,d-1,-Infinity,Infinity,1);   // ventana completa => puntaje exacto
+      if(_stop){aborted=true;break;}
+      next.push({move:e.move,score:v});
+    }
+    if(aborted) break;
+    next.sort((a,b)=>b.score-a.score);
+    scored=next; depthDone=d; best=scored[0].move; bestScore=scored[0].score;
+    if(Math.abs(bestScore)>=MATE-200) break; // mate forzado
+  }
+  return {list:scored, best, score:bestScore, depth:depthDone, mate:Math.abs(bestScore)>=MATE-200, nodes:_nodes};
+}
+
+/* ============================================================
+   APRENDIZAJE POR DISPOSITIVO — la CPU calibra su nivel a quien juega.
+   Guarda en localStorage un "rating" R y el historial G/V/D. Cada partida
+   vs CPU lo actualiza: si ganas sube (más reto), si pierdes baja (más fácil).
+   En modo ADAPTATIVO la fuerza sale de R. Aprende de cada persona en ESTE
+   dispositivo/navegador; compartir el aprendizaje entre personas/equipos
+   necesitaría un servidor (backend).
+   ============================================================ */
+const LEARN_KEY='gridchess_profile_v1';
+let learn={ R:1000, w:0, l:0, d:0, games:0 };
+function loadLearn(){ try{ const j=JSON.parse(localStorage.getItem(LEARN_KEY)); if(j&&typeof j.R==='number') learn=Object.assign(learn,j); }catch(e){} }
+function saveLearn(){ try{ localStorage.setItem(LEARN_KEY, JSON.stringify(learn)); }catch(e){} }
+function learnLevelName(R){ return R>=1850?'Maestro' : R>=1450?'Difícil' : R>=1050?'Medio' : R>=800?'Fácil' : 'Principiante'; }
+// Convierte el rating aprendido en parámetros de búsqueda (escalera suave).
+function adaptiveSettings(R){
+  if(R>=1850) return {master:true};
+  const t=Math.max(0,Math.min(1,(1850-R)/1250)); // 0 fuerte … 1 flojo
+  return { master:false,
+    depth:  R>=1450?5 : R>=1050?4 : R>=800?3 : 2,
+    time:   R>=1450?900 : R>=1050?550 : 320,
+    maxDrop:Math.round(18 + t*300),
+    temp:   Math.round(8 + t*120) };
+}
+// Registra el resultado de una partida vs CPU y mueve el rating hacia tu nivel.
+function recordResult(humanWon, draw){
+  learn.games++;
+  let S; if(draw){ learn.d++; S=0.5; } else if(humanWon){ learn.w++; S=1; } else { learn.l++; S=0; }
+  learn.R = Math.round(Math.max(600, Math.min(2200, learn.R + 70*(S-0.5)*2)));
+  saveLearn();
+}
+
+// Escalera de dificultad para los niveles 1-3 (analyzeRoot es rápido a poca
+// profundidad): profundidad, tiempo, cuánto puede alejarse de la mejor jugada
+// (maxDrop, en centipeones) y "temperatura" de la elección aleatoria.
+const AI_CFG={
+  1:{depth:2, time:220,  maxDrop:300, temp:120},  // FÁCIL  — comete imprecisiones, batible
+  2:{depth:4, time:550,  maxDrop:110, temp:50 },  // MEDIO  — sólido, errores ocasionales
+  3:{depth:5, time:950,  maxDrop:40,  temp:18 }   // DIFÍCIL— casi siempre la mejor
+};
+// Elige una jugada de la lista raíz con "temperatura": maxDrop limita cuánto
+// peor que la mejor puede ser (en centipeones); temp controla lo aleatorio.
+function weightedPick(res, maxDrop, temp){
+  if(!res || !res.list.length) return null;
+  if(res.mate) return res.best;                 // mate forzado => jugarlo directo
+  const best=res.list[0].score;
+  const pool=res.list.filter(e=> best-e.score<=maxDrop);
+  if(pool.length<=1 || temp<=0) return res.list[0].move;
+  let sum=0; const w=pool.map(e=>{const x=Math.exp((e.score-best)/temp); sum+=x; return x;});
+  let r=Math.random()*sum;
+  for(let i=0;i<pool.length;i++){ r-=w[i]; if(r<=0) return pool[i].move; }
+  return pool[0].move;
+}
+// MAESTRO: máxima fuerza con la búsqueda profunda y eficiente (analyze).
+// Variedad SOLO en la apertura, eligiendo entre planteamientos casi óptimos.
+function aiPlayMaster(s){
+  if(s.fullmove<=4){
+    const m=weightedPick(analyzeRoot(s,5,650), 32, 22); // abanico de aperturas sólidas
+    if(m) return m;
+  }
+  return analyze(s, MASTER_DEPTH, MASTER_TIME).move;
+}
+// Niveles flojos: poca profundidad + elección con temperatura (escalera real).
+function aiPlayRoot(s, depth, time, maxDrop, temp){
+  if(s.fullmove<=4){ maxDrop=Math.max(maxDrop,28); temp=Math.max(temp,34); } // variedad de apertura
+  return weightedPick(analyzeRoot(s, depth, time), maxDrop, temp);
+}
+// Selección final de la CPU.
+function pickAIMove(s,difficulty){
+  if(difficulty===5){ // ADAPTATIVO: la fuerza sale del rating aprendido
+    const a=adaptiveSettings(learn.R);
+    return a.master ? aiPlayMaster(s) : aiPlayRoot(s, a.depth, a.time, a.maxDrop, a.temp);
+  }
+  if(difficulty>=4) return aiPlayMaster(s);
+  const cfg=AI_CFG[difficulty]||AI_CFG[2];
+  return aiPlayRoot(s, cfg.depth, cfg.time, cfg.maxDrop, cfg.temp);
 }
 
 /* ============================================================
@@ -992,10 +1173,13 @@ let state, history, sanList, capturedRed, capturedBlue;
 let selected=null, legalForSel=[], flipped=false;
 let mode='ai', difficulty=2, soundOn=true, aiThinking=false, gameOver=false;
 let pendingPromo=null;
+// Colores del MOTOR que controla cada quién. Por defecto el humano juega RED
+// (que se ve AZUL y mueve primero); la CPU juega BLUE (se ve roja).
+let humanColor=RED, aiColor=BLUE;
 /* ---- MAESTRO 2000 (coach) ---- */
 let coachOn=true, coachBusy=false, coachLog=[], lastOpening=null;
 const LIVE_DEPTH=5, LIVE_TIME=480, PLAYED_DEPTH=4, PLAYED_TIME=240;
-const HINT_DEPTH=8, HINT_TIME=1200, MASTER_DEPTH=7, MASTER_TIME=900;
+const HINT_DEPTH=8, HINT_TIME=1300, MASTER_DEPTH=7, MASTER_TIME=1400;
 
 function freshGame(){
   state=newState(); history=[]; sanList=[];
@@ -1008,6 +1192,8 @@ function freshGame(){
   document.getElementById('openingText').textContent='—';
   document.getElementById('evalRow').style.display='none';
   renderCoords(); render(); updateTurnBar(); renderCaptured(); renderMoves();
+  // si la CPU controla el bando que mueve primero, que abra ella
+  if(mode==='ai' && state.turn===aiColor) maybeAIMove();
 }
 
 /* coordinate labels respect flip */
@@ -1051,8 +1237,9 @@ function render(skip){
       const isSkip = skip && skip[0]===r && skip[1]===c;
       if(p && !isSkip){
         const cv=document.createElement('canvas');
-        drawPiece(cv,p.t,p.c,64);
-        cv.style.filter = p.c===RED
+        const vc=vcol(p.c);
+        drawPiece(cv,p.t,vc,64);
+        cv.style.filter = vc==='red'
           ? 'drop-shadow(0 0 5px var(--red)) drop-shadow(0 0 2px rgba(255,255,255,.5))'
           : 'drop-shadow(0 0 5px var(--blue)) drop-shadow(0 0 2px rgba(255,255,255,.5))';
         sq.appendChild(cv);
@@ -1069,8 +1256,8 @@ function updateTurnBar(){
   const chk = !gameOver && inCheck(state,state.turn);
   let extra = turnbar.querySelector('.check'); if(extra) extra.remove();
   if(gameOver){ turnbar.classList.add('over'); return; }
-  turnbar.classList.add(state.turn===RED?'red':'blue');
-  turntext.textContent = (state.turn===RED?'ROJO':'AZUL')+' MUEVE';
+  turnbar.classList.add(vcol(state.turn));
+  turntext.textContent = vlab(state.turn)+' MUEVE';
   if(chk){const b=document.createElement('span'); b.className='check'; b.textContent='¡JAQUE!'; turnbar.appendChild(b);}
 }
 
@@ -1079,8 +1266,8 @@ function renderCaptured(){
   cr.innerHTML=''; cb.innerHTML='';
   const add=(el,t,col)=>{const cv=document.createElement('canvas'); drawPiece(cv,t,col,22); el.appendChild(cv);};
   // capturedRed = blue pieces taken by red
-  capturedRed.slice().sort((a,b)=>VAL[b]-VAL[a]).forEach(t=>add(cr,t,BLUE));
-  capturedBlue.slice().sort((a,b)=>VAL[b]-VAL[a]).forEach(t=>add(cb,t,RED));
+  capturedRed.slice().sort((a,b)=>VAL[b]-VAL[a]).forEach(t=>add(cr,t,vcol(BLUE)));
+  capturedBlue.slice().sort((a,b)=>VAL[b]-VAL[a]).forEach(t=>add(cb,t,vcol(RED)));
   const sumRed=capturedRed.reduce((s,t)=>s+VAL[t],0);
   const sumBlue=capturedBlue.reduce((s,t)=>s+VAL[t],0);
   const diff=Math.round((sumRed-sumBlue)/100);
@@ -1104,7 +1291,7 @@ function renderMoves(){
 /* ---------- INTERACTION ---------- */
 function onSquareClick(r,c){
   if(gameOver||aiThinking||pendingPromo||coachBusy) return;
-  if(mode==='ai' && state.turn===BLUE) return; // AI's turn
+  if(mode==='ai' && state.turn===aiColor) return; // turno de la CPU
   const p=state.board[r][c];
   if(selected){
     // try to move to (r,c)
@@ -1132,7 +1319,7 @@ function askPromotion(variants){
   ['q','r','b','n'].forEach(pt=>{
     const v=variants.find(x=>x.promote===pt); if(!v)return;
     const opt=document.createElement('div'); opt.className='opt';
-    const cv=document.createElement('canvas'); drawPiece(cv,pt,state.turn,64); opt.appendChild(cv);
+    const cv=document.createElement('canvas'); drawPiece(cv,pt,vcol(state.turn),64); opt.appendChild(cv);
     opt.addEventListener('click',()=>{ document.getElementById('promoOverlay').classList.add('hidden'); pendingPromo=null; doMove(v); });
     wrap.appendChild(opt);
   });
@@ -1191,11 +1378,11 @@ function animateMove(m, isCapture, done){
     const mover=document.createElement('canvas');
     mover.className='mover';
     const movedPiece = state.board[m.to[0]][m.to[1]]; // already moved (could be promoted)
-    drawPiece(mover, movedPiece.t, movedPiece.c, 64);
+    drawPiece(mover, movedPiece.t, vcol(movedPiece.c), 64);
     mover.style.width=size*0.88+'px'; mover.style.height=size*0.88+'px';
     mover.style.left=(fE.offsetLeft + size*0.06)+'px';
     mover.style.top=(fE.offsetTop + size*0.06)+'px';
-    mover.style.color = movedPiece.c===RED?'#ff2b4e':'#18e3ff';
+    mover.style.color = vcol(movedPiece.c)==='red'?'#ff2b4e':'#18e3ff';
     boardEl.appendChild(mover);
     const dx=tE.offsetLeft - fE.offsetLeft;
     const dy=tE.offsetTop - fE.offsetTop;
@@ -1215,7 +1402,7 @@ function checkGameEnd(oppMoves,oppCheck){
   if(state.halfmove>=100){ endGame('draw','REGLA DE 50 MOVIMIENTOS','Tablas. Ningún programa cedió terreno.'); return; }
   if(insufficientMaterial(state.board)){ endGame('draw','MATERIAL INSUFICIENTE','Tablas. Imposible derribar al rival.'); return; }
   if(oppMoves.length===0){
-    if(oppCheck){ const winner=other(state.turn); endGame(winner,'JAQUE MATE', (winner===RED?'ROJO':'AZUL')+' domina la Red.'); }
+    if(oppCheck){ const winner=other(state.turn); endGame(winner,'JAQUE MATE', vlab(winner)+' domina la Red.'); }
     else { endGame('draw','REY AHOGADO','Tablas. El rey no puede moverse sin caer.'); }
   }
 }
@@ -1233,8 +1420,15 @@ function endGame(result,title,sub){
   document.getElementById('overTitle').innerHTML = '<span class="g">GRID</span>//<span class="c">CHESS</span>';
   const w=document.getElementById('overWinner');
   if(result==='draw'){ w.className='winner draw'; w.textContent='TABLAS'; }
-  else { w.className='winner '+result; w.textContent=(result===RED?'ROJO':'AZUL')+' GANA'; }
-  document.getElementById('overSub').textContent = title+' — '+sub;
+  else { w.className='winner '+vcol(result); w.textContent=vlab(result)+' GANA'; }
+  let learnNote='';
+  if(mode==='ai'){
+    const draw=(result==='draw'), humanWon=(!draw && result===humanColor);
+    recordResult(humanWon, draw);              // la CPU aprende de este resultado
+    learnNote=' · 🧠 Tu nivel: '+learnLevelName(learn.R)+' (~'+learn.R+')';
+    updateLearnUI();
+  }
+  document.getElementById('overSub').textContent = title+' — '+sub+learnNote;
   if(result!=='draw') sfx('win');
   if(coachOn && coachLog.length) renderReview();
   setTimeout(()=>ov.classList.remove('hidden'), 700);
@@ -1242,16 +1436,14 @@ function endGame(result,title,sub){
 
 /* ---------- AI ---------- */
 function maybeAIMove(){
-  if(gameOver || mode!=='ai' || state.turn!==BLUE) return;
+  if(gameOver || mode!=='ai' || state.turn!==aiColor) return;
   if(coachBusy){ setTimeout(maybeAIMove, 60); return; } // wait for the coach to finish
   aiThinking=true;
   const t=document.getElementById('aithink');
-  t.textContent = difficulty>=4 ? 'EL MAESTRO PIENSA…' : 'CPU CALCULANDO…';
+  t.textContent = difficulty===5 ? 'CPU ADAPTÁNDOSE…' : difficulty>=4 ? 'EL MAESTRO PIENSA…' : 'CPU CALCULANDO…';
   t.classList.add('show');
   setTimeout(()=>{
-    let m;
-    if(difficulty>=4){ const r=analyze(state, MASTER_DEPTH, MASTER_TIME); m=r.move; }
-    else m=chooseAIMove(state,difficulty);
+    const m = pickAIMove(state, difficulty);
     aiThinking=false; t.classList.remove('show'); t.textContent='';
     if(m) doMove(m); else { /* no moves -> end already handled */ }
   }, 260);
@@ -1262,13 +1454,10 @@ function undo(){
   if(aiThinking||pendingPromo) return;
   if(!history.length) return;
   // in AI mode undo a full pair (player+ai) so it's player's turn again
-  let steps = (mode==='ai' && history.length>=2 && history[history.length-1].snap.turn===RED) ? 2 : 1;
-  // simpler: if ai mode and last mover was AI (blue just moved -> now red turn) undo two
+  let steps=1;
   if(mode==='ai'){
-    steps = 1;
     const last=history[history.length-1];
-    if(last.move.c===BLUE && history.length>=2) steps=2; // undo AI + player
-    else if(last.move.c===RED && !gameOver) steps=1;
+    if(last.move.c===aiColor && history.length>=2) steps=2; // deshacer CPU + tu jugada
   }
   for(let i=0;i<steps && history.length;i++){
     const h=history.pop();
@@ -1330,7 +1519,7 @@ function sfx(kind){
 /* ============================================================
    MAESTRO 2000 — entrenador en vivo + repaso post-partida
    ============================================================ */
-function isHumanMove(color){ return mode==='pvp' ? true : color===RED; }
+function isHumanMove(color){ return mode==='pvp' ? true : color===humanColor; }
 
 /* badge meta per quality bucket */
 const QUALITY={
@@ -1427,7 +1616,7 @@ function coachMove(pre, m, playedSan, after){
 function renderCoachLive(e, isBest){
   const q=QUALITY[e.quality];
   let html='<div class="qbadge '+q.cls+'">'+q.tag+'</div>';
-  html+='<div class="cline">Jugaste <b class="'+(e.color===RED?'rm':'bm')+'">'+e.playedSan+'</b>';
+  html+='<div class="cline">Jugaste <b class="'+(vcol(e.color)==='red'?'rm':'bm')+'">'+e.playedSan+'</b>';
   if(!isBest) html+=' — la mejor era <b class="bm">'+e.bestSan+'</b>';
   html+='.</div>';
   if(e.head) html+='<div class="cline"><b style="color:var(--gold)">'+e.head+'</b></div>';
@@ -1440,7 +1629,7 @@ function renderCoachLive(e, isBest){
 /* live hint for the side to move */
 function showHint(){
   if(gameOver||coachBusy||pendingPromo||aiThinking) return;
-  if(mode==='ai' && state.turn!==RED){ return; }
+  if(mode==='ai' && state.turn!==humanColor){ return; }
   coachBusy=true;
   renderCoachAnalyzing('Buscando la mejor jugada');
   setTimeout(()=>{
@@ -1452,7 +1641,7 @@ function showHint(){
         const desc=describeMove(state, res.move);
         const redScore=(state.turn===RED)?res.score:-res.score;
         let html='<div class="qbadge q-best">💡 RECOMENDACIÓN</div>';
-        html+='<div class="cline">Juega <b class="'+(state.turn===RED?'rm':'bm')+'">'+san+'</b>.</div>';
+        html+='<div class="cline">Juega <b class="'+(vcol(state.turn)==='red'?'rm':'bm')+'">'+san+'</b>.</div>';
         if(desc.head) html+='<div class="cline"><b style="color:var(--gold)">'+desc.head+'</b></div>';
         html+=reasonsHTML(desc.reasons);
         document.getElementById('coachBody').innerHTML=html;
@@ -1478,7 +1667,7 @@ function updateOpening(){
 
 /* post-game review rendered into the coach card */
 function renderReview(){
-  const mine = coachLog.filter(e=> mode==='pvp' ? true : e.color===RED);
+  const mine = coachLog.filter(e=> mode==='pvp' ? true : e.color===humanColor);
   if(!mine.length){ document.getElementById('coachBody').innerHTML='<div class="coach-empty">Sin jugadas que repasar.</div>'; return; }
   const counts={brilliant:0,best:0,great:0,good:0,inacc:0,mistake:0,blunder:0};
   let lossSum=0, lossN=0;
@@ -1544,22 +1733,66 @@ document.getElementById('coachToggle').addEventListener('click',e=>{
 });
 document.getElementById('hintBtn').addEventListener('click',showHint);
 
-function startGame(m){
-  mode=m;
+/* ---------- pantalla de inicio: selección previa ---------- */
+// Muestra en la pantalla de inicio lo que la CPU ha aprendido de ti.
+function updateLearnUI(){
+  const el=document.getElementById('learnLine'); if(!el) return;
+  if(learn.games>0){
+    el.textContent='🧠 Tu nivel: '+learnLevelName(learn.R)+' (~'+learn.R+') · '
+      +learn.games+(learn.games===1?' partida':' partidas')
+      +' ('+learn.w+'V '+learn.l+'D '+learn.d+'T)';
+  } else {
+    el.textContent='🧠 Aún no te conozco. Juega y me adapto a tu nivel.';
+  }
+}
+function segPick(id){ return document.querySelector('#'+id+' button.on'); }
+function wirePreSeg(id, onPick){
+  document.getElementById(id).addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    [...e.currentTarget.children].forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    if(onPick) onPick(b);
+  });
+}
+wirePreSeg('preModeSeg', b=>{
+  const isAI = b.dataset.mode==='ai';
+  document.getElementById('preAiopts').style.display = isAI?'block':'none';
+  document.getElementById('startHint').textContent = isAI
+    ? 'El Azul siempre mueve primero · elige tu bando y dificultad'
+    : 'Dos jugadores por turnos · el Azul abre la partida';
+});
+wirePreSeg('preDiffSeg');
+wirePreSeg('preColorSeg');
+
+function startGame(){
+  const m = segPick('preModeSeg').dataset.mode;
+  mode = m;
+  if(m==='ai'){
+    difficulty = parseInt(segPick('preDiffSeg').dataset.diff,10);
+    const side = segPick('preColorSeg').dataset.side; // 'blue'=mueve 1° · 'red'=mueve 2°
+    if(side==='red'){ humanColor=BLUE; aiColor=RED; flipped=true; }
+    else { humanColor=RED; aiColor=BLUE; flipped=false; }
+  } else {
+    humanColor=RED; aiColor=BLUE; flipped=false;
+  }
+  // sincroniza los controles del panel lateral con lo elegido
   document.getElementById('aiopts').style.display = mode==='ai'?'block':'none';
   [...document.getElementById('modeSeg').children].forEach(x=>x.classList.toggle('on',x.dataset.mode===m));
+  [...document.getElementById('diffSeg').children].forEach(x=>x.classList.toggle('on',parseInt(x.dataset.diff,10)===difficulty));
   document.getElementById('startOverlay').classList.add('hidden');
   initAudio();
   freshGame();
 }
-document.getElementById('startAI').addEventListener('click',()=>startGame('ai'));
-document.getElementById('startPVP').addEventListener('click',()=>startGame('pvp'));
+document.getElementById('startBtn').addEventListener('click',startGame);
 
 // keyboard: U=undo, F=flip
 document.addEventListener('keydown',e=>{
   if(e.key==='u'||e.key==='U')undo();
   if(e.key==='f'||e.key==='F'){flipped=!flipped; renderCoords(); render();}
 });
+
+// carga el perfil aprendido (si existe) y muestra el nivel en la pantalla de inicio
+loadLearn();
+updateLearnUI();
 
 // initial paint behind overlay
 freshGame();
